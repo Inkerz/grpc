@@ -8,13 +8,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends cmake build-ess
 
 #Install gRPC
 WORKDIR /
-RUN git clone --recurse-submodules -b v1.46.1 https://github.com/grpc/grpc
+RUN git clone --recurse-submodules -b v1.51.1 https://github.com/grpc/grpc
 
 WORKDIR /grpc/build
-RUN cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr ..
-RUN make -j20
+RUN cmake \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DgRPC_INSTALL=ON \
+	-DgRPC_BUILD_TESTS=OFF \
+	-DCMAKE_INSTALL_PREFIX=/usr ..
+RUN make -j10
 RUN DESTDIR=/install make install
 
 WORKDIR /artifacts
-ENTRYPOINT tar -czvf grpc-1.46.1.tar.gz -C /install .
+ENTRYPOINT tar -czvf grpc-1.51.1.tar.gz -C /install .
 
